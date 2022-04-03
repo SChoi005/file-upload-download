@@ -1,6 +1,7 @@
 package project.service;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,12 @@ public class FileService{
         return fileRepository.save(f);
     }
     
+    public File getFile(Long id){
+        return fileRepository.findById(id).get();
+    }
+    
+    public Stream<File> getAllFiles() {
+        return fileRepository.findAll().stream();
+    }
     
 }

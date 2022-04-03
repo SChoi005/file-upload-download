@@ -1,8 +1,15 @@
 package project.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,10 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.extern.slf4j.Slf4j;
+import project.entity.File;
 import project.service.FileService;
 
-@Slf4j
 @RestController
 @RequestMapping("/file")
 public class FileController{
@@ -27,9 +33,37 @@ public class FileController{
         fileService.store(file);
     }
     
-    @GetMapping("/download/{fileName}")
-    public void fileDownload(@PathVariable String fileName){
+    @PostMapping("/multi-upload")
+    public void fileUpload(@RequestParam("file") MultipartFile[] files) throws IOException{
+        for(MultipartFile file:files){
+            fileService.store(file);
+        }
+    }
     
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> fileDownload(@PathVariable Long id){
+        
+        File file = fileService.getFile(id);
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .body(file.getData());
+    }
+    
+    @GetMapping("/download/all")
+    public ResponseEntity<List<File>> allFileDownload(){
+        
+        List<File> files = fileService.getAllFiles().map(f->{
+            File file = new File();
+            file.setId(f.getId());
+            file.setFileName(f.getFileName());
+            file.setFileSize(f.getFileSize());
+            file.setData(f.getData());
+            file.setType(f.getType());
+            return file;
+        }).collect(Collectors.toList());
+        
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"all.zip\"").body(files);
     }
     
 }
