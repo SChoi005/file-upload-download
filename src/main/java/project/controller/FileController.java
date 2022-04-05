@@ -1,10 +1,13 @@
 package project.controller;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -48,22 +51,6 @@ public class FileController{
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
                 .body(file.getData());
-    }
-    
-    @GetMapping("/download/all")
-    public ResponseEntity<List<File>> allFileDownload(){
-        
-        List<File> files = fileService.getAllFiles().map(f->{
-            File file = new File();
-            file.setId(f.getId());
-            file.setFileName(f.getFileName());
-            file.setFileSize(f.getFileSize());
-            file.setData(f.getData());
-            file.setType(f.getType());
-            return file;
-        }).collect(Collectors.toList());
-        
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"all.zip\"").body(files);
     }
     
 }

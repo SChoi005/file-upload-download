@@ -33,8 +33,4 @@ public class FileService{
         return fileRepository.findById(id).get();
     }
     
-    public Stream<File> getAllFiles() {
-        return fileRepository.findAll().stream();
-    }
-    
 }
