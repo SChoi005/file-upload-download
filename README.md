@@ -2,7 +2,7 @@
 
 ## upload
 > use MultipartFile, StringUtils libraries. and Postman api<br/>
-```bash
+```java
 
     @PostMapping("/upload")
     public void fileUpload(@RequestParam("file") MultipartFile file) throws IOException{
@@ -24,7 +24,7 @@
 
 ## download
 > return type is byte[], and add CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"" in header.
-```bash
+```java
     @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> fileDownload(@PathVariable Long id){
         
